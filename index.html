@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab Fisika Medik - Universitas Hasanuddin</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 50%, #0f2e47 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            perspective: 1000px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        /* Parallax Background */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 50%, #0f2e47 100%);
+            z-index: -1;
+            transform: translateZ(0);
+        }
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #8A1538;
+            color: white;
+            position: fixed;
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease-in-out;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+        }
+        .sidebar:hover {
+            transform: scale(1.05);
+        }
+        .sidebar img {
+            width: 90px;
+            display: block;
+            margin: 0 auto;
+        }
+        .sidebar h2 {
+            font-size: 20px;
+            text-align: center;
+            margin: 10px 0 4px;
+        }
+        .sidebar p {
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            margin-top: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.1);
+        }
+        .content {
+            margin-left: 260px;
+            padding: 30px;
+            min-height: calc(100vh - 60px);
+            width: auto;
+            overflow-x: hidden;
+        }
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+        }
+        h1 { 
+            color: #8A1538;
+            animation: textShadowAnimation 3s ease-in-out infinite;
+        }
+        .section {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.75);
+            border-left: 5px solid #8A1538;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            opacity: 1;
+            animation: slideInSection 0.6s ease-out, fadeInText 0.8s ease-in-out;
+            animation-fill-mode: forwards, forwards;
+            transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            will-change: transform, background;
+        }
+        .section:nth-child(1) { animation-delay: 0s, 0s; }
+        .section:nth-child(2) { animation-delay: 0.1s, 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s, 0.2s; }
+        .section:nth-child(n+4) { animation-delay: 0.3s, 0.3s; }
+        .section:hover {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 25px rgba(138, 21, 56, 0.2);
+            transform: translateY(-3px);
+        }
+        .section h2, .section h3 {
+            color: #1a3a52;
+            margin-top: 0;
+        }
+        .section p, .section li {
+            color: #333;
+            line-height: 1.6;
+        }
+        .section b {
+            color: #8A1538;
+            font-weight: 600;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            width: 100%;
+        }
+        .card {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.75);
+            border-left: 3px solid #8A1538;
+            border-radius: 8px;
+            border: 1px solid rgba(138, 21, 56, 0.2);
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out, background 0.3s ease-in-out;
+            cursor: pointer;
+            opacity: 1;
+            animation: cardGlide 0.8s ease-out, staggerCard 0.6s ease-in-out, floatCard 3s ease-in-out infinite;
+            animation-fill-mode: forwards, forwards, none;
+            overflow: hidden;
+            position: relative;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            will-change: transform;
+        }
+        .card:nth-child(1) { animation-delay: 0s, 0s, 0s; }
+        .card:nth-child(2) { animation-delay: 0.3s, 0.1s, 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.6s, 0.2s, 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.9s, 0.3s, 0.3s; }
+        .card:nth-child(5) { animation-delay: 1.2s, 0.4s, 0.4s; }
+        .card:nth-child(n+6) { animation-delay: 1.5s, 0.5s, 0.5s; }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        .card.ripple::before {
+            animation: ripple 0.6s ease-out;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(138, 21, 56, 0.3);
+            transform: skewY(-2deg) translateY(-5px);
+            background: linear-gradient(135deg, #8A1538 0%, #c73860 100%);
+            color: white;
+        }
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes staggerCard {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @keyframes ripple {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+            }
+            to {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+        @keyframes typewriter {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid #8A1538;
+            white-space: nowrap;
+            animation: typewriter 5s steps(40, end), blink 0.75s step-end;
+        }
+        @keyframes blink {
+            from, to {
+                border-color: transparent;
+            }
+            50% {
+                border-color: #8A1538;
+            }
+        }
+        @keyframes textShadowAnimation {
+            0% {
+                text-shadow: 0 0 5px rgba(138, 21, 56, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(138, 21, 56, 0.8), 0 0 30px rgba(138, 21, 56, 0.4);
+            }
+            100% {
+                text-shadow: 0 0 5px rgba(138, 21, 56, 0.4);
+            }
+        }
+        @keyframes floatCard {
+            0%, 100% {
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+            }
+            50% {
+                filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+            }
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes slideInSection {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes cardGlide {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .loading.active {
+            display: block;
+            opacity: 1;
+        }
+        .loading-spinner {
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid #8A1538;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        .breadcrumb {
+            display: none;
+            margin-left: 260px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            color: #333;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .breadcrumb a {
+            color: #8A1538;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .breadcrumb a:hover {
+            color: #5a0d26;
+            text-decoration: underline;
+        }
+        .breadcrumb span {
+            margin: 0 8px;
+            color: #666;
+        }
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #8A1538 0%, #c73860 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            transition: background 0.3s, transform 0.3s;
+            z-index: 100;
+        }
+        .scroll-to-top.show {
+            display: flex;
+        }
+        .scroll-to-top:hover {
+            background: linear-gradient(135deg, #5a0d26 0%, #8A1538 100%);
+            transform: translateY(-5px) scale(1.1);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        ul, ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-in-out forwards;
+        }
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .modal-close:hover {
+            color: #8A1538;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                padding: 0;
+                overflow-x: hidden;
+                transition: width 0.3s ease-in-out;
+            }
+            .sidebar.show {
+                width: 260px;
+                padding: 20px;
+            }
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .breadcrumb {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1000;
+                background: #8A1538;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 18px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 480px) {
+            .card {
+                padding: 10px;
+                font-size: 12px;
+            }
+            .scroll-to-top {
+                width: 40px;
+                height: 40px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 18px;
+            }
+            .section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            h1, h2, h3 {
+                font-size: 18px;
+            }
+            .menu-toggle {
+                padding: 8px 12px;
+                font-size: 16px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">↑</button>
+
+    <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()">☰</button>
+
+    <div class="parallax-bg"></div>
+
+    <div class="sidebar" id="sidebar">
+        <img src="Logo-Resmi-Unhas-1.png" alt="Logo UNHAS">
+        <h2>Universitas Hasanuddin</h2>
+        <p>Portal Mahasiswa</p>
+
+        <a href="#beranda">Beranda</a>
+        <a href="#unhas">Universitas Hasanuddin</a>
+        <a href="#mipa">Fakultas MIPA</a>
+        <a href="#fisika">Program Studi Fisika</a>
+        <a href="#lab">Lab Fisika Medik</a>
+        <a href="#dosen">Daftar Dosen</a>
+        <a href="#mahasiswa">Daftar Mahasiswa</a>
+    </div>
+
+    <div class="breadcrumb" id="breadcrumb">
+        <a onclick="showPage('beranda')">Home</a>
+        <span>/</span>
+        <span id="breadcrumb-current">Beranda</span>
+    </div>
+
+    <div class="content">
+        <section id="beranda" class="section">
+            <h1 class="typewriter">Selamat Datang di Lab Fisika Medik</h1>
+            <p>Website portal informasi akademik dan laboratorium Fisika Medik Universitas Hasanuddin.</p>
+        </section>
+
+        <section id="unhas" class="section">
+            <h2>Universitas Hasanuddin</h2>
+            <img src="gedung rektor.webp" alt="foto unhas" width="100%" />
+            <p><b>Universitas Hasanuddin (UNHAS)</b> adalah perguruan tinggi negeri yang berlokasi di Makassar, Sulawesi Selatan, dan menjadi salah satu universitas terbesar serta paling berpengaruh di kawasan Indonesia Timur. Didirikan pada tahun 1956, UNHAS dikenal sebagai pusat pendidikan, penelitian, dan pengabdian masyarakat yang berstandar nasional maupun internasional.</p>
+            <p>Dengan kampus yang luas dan hijau di kawasan Tamalanrea, Unhas menyediakan lingkungan akademik yang modern serta fasilitas lengkap, mulai dari laboratorium riset, pusat teknologi informasi, rumah sakit pendidikan, perpustakaan digital, hingga pusat kegiatan mahasiswa.</p>
+            <h3>Visi & Misi</h3>
+            <p>UNHAS memiliki visi menjadi universitas berkelas dunia yang tetap berakar pada budaya dan kearifan lokal. Misinya meliputi peningkatan kualitas pendidikan, penelitian multidisiplin, serta kontribusi nyata bagi pembangunan bangsa.</p>
+            <h3>Fakultas di Universitas Hasanuddin</h3>
+            <ul>
+                <li>Fakultas Kedokteran</li>
+                <li>Fakultas Teknik</li>
+                <li>Fakultas MIPA</li>
+                <li>Fakultas Ilmu Sosial dan Ilmu Politik</li>
+                <li>Fakultas Hukum</li>
+                <li>Fakultas Keperawatan</li>
+                <li>Fakultas Kesehatan Masyarakat</li>
+                <li>Dan fakultas-fakultas lainnya</li>
+            </ul>
+        </section>
+
+        <section id="mipa" class="section">
+            <h2>Fakultas Matematika dan Ilmu Pengetahuan Alam (FMIPA)</h2>
+            <img src="foto mipa.jpeg" alt="foto mipa" width="100%" />
+            <p><b>FMIPA Universitas Hasanuddin</b> merupakan fakultas yang berfokus pada pengembangan ilmu dasar seperti matematika, fisika, kimia, dan biologi. Fakultas ini memiliki visi menjadi pusat ilmu pengetahuan dan riset yang unggul di tingkat nasional maupun internasional.</p>
+            <p>FMIPA Unhas memiliki gedung perkuliahan, laboratorium modern, ruang riset, serta berbagai fasilitas yang mendukung kegiatan akademik dan penelitian mahasiswa. Fakultas ini juga aktif dalam kerjasama ilmiah dengan lembaga riset, industri, serta institusi pendidikan dalam dan luar negeri.</p>
+            <h3>Program Studi di FMIPA</h3>
+            <ul>
+                <li>Matematika</li>
+                <li>Statistika</li>
+                <li>Fisika</li>
+                <li>Geofisika</li>
+                <li>Biologi</li>
+                <li>Kimia</li>
+                <li>Sistem Informasi</li>
+                <li>Aktuaria</li>
+            </ul>
+            <p>Setiap program studi memiliki laboratorium dan kelompok riset sendiri, termasuk Laboratorium Fisika Medik yang menjadi bagian dari Program Studi Fisika.</p>
+        </section>
+
+        <section id="fisika" class="section">
+            <h2>Program Studi Fisika</h2>
+            <p><b>Program Studi Fisika Universitas Hasanuddin</b> merupakan salah satu prodi sains yang mempelajari fenomena alam mulai dari skala mikroskopis hingga kosmik melalui pendekatan matematis dan eksperimen. Prodi ini berfokus pada pengembangan pengetahuan dasar fisika sekaligus aplikasinya pada teknologi modern.</p>
+            <h3>Konsentrasi dan Laboratorium</h3>
+            <p>Fisika Unhas memiliki beberapa kelompok keahlian dan laboratorium, antara lain:</p>
+            <ul>
+                <li>Fisika Teori & Komputasi</li>
+                <li>Fisika Material</li>
+                <li>Elektronika Fisis & Instrumentasi</li>
+                <li>Fisika Medik</li>
+            </ul>
+            <p>Setiap laboratorium menawarkan bidang kajian spesifik, kegiatan penelitian, dan fasilitas yang menunjang pembelajaran mahasiswa. Salah satu yang berkembang pesat adalah <b>Laboratorium Fisika Medik</b> yang fokus pada penerapan fisika dalam dunia kesehatan dan teknologi medis.</p>
+
+            <h3>Prospek Lulusan</h3>
+            <ul>
+                <li>Peneliti di bidang sains dan teknologi</li>
+                <li>Fisikawan medis di rumah sakit</li>
+                <li>Pengembang alat kesehatan berbasis teknologi</li>
+                <li>Tenaga ahli instrumentasi dan kontrol</li>
+                <li>Dosen dan akademisi</li>
+            </ul>
+        </section>
+
+        <section id="lab" class="section">
+            <h2>Laboratorium Fisika Medik</h2>
+            <p><b>Laboratorium Fisika Medik</b> merupakan salah satu laboratorium di Program Studi Fisika Universitas Hasanuddin yang berfokus pada penerapan konsep-konsep fisika dalam dunia kesehatan dan medis. Bidang ini menggabungkan pemahaman mendalam tentang fisika radiasi, instrumentasi medis, serta interaksi energi dengan materi biologis.</p>
+
+            <p>Laboratorium ini berperan penting dalam pendidikan, penelitian, dan pengembangan teknologi yang digunakan pada berbagai perangkat medis modern, seperti mesin <b>CT-Scan</b>, <b>MRI (Magnetic Resonance Imaging)</b>, <b>Ultrasonografi</b>, dan sistem <b>Radioterapi</b>. Selain itu, mahasiswa juga mempelajari cara kerja sistem pencitraan medis (medical imaging), proteksi radiasi, dan teknik dosimetri untuk memastikan keamanan pasien dan tenaga medis.</p>
+
+            <h3>Bidang Kajian Utama</h3>
+            <ul>
+                <li><b>Fisika Radiasi</b> – mempelajari sifat radiasi pengion dan penggunaannya dalam diagnosis serta terapi.</li>
+                <li><b>Medical Imaging</b> – memahami teknologi pencitraan medis seperti MRI, CT-Scan, dan X-Ray.</li>
+                <li><b>Dosimetri</b> – menghitung dan mengukur dosis radiasi yang diterima pasien dalam prosedur medis.</li>
+                <li><b>Instrumentasi Medis</b> – mempelajari peralatan elektronik dan sensor yang digunakan di rumah sakit.</li>
+                <li><b>Proteksi Radiasi</b> – pengendalian risiko radiasi untuk keselamatan manusia.</li>
+            </ul>
+
+            <h3>Cabang Utama Fisika Medik Klinis</h3>
+            <ul>
+                <li><b>Radiodiagnostik</b> – bidang yang memanfaatkan radiasi untuk menghasilkan gambar bagian dalam tubuh. Fisika Medik berperan dalam memahami prinsip kerja CT-Scan, X-Ray, fluoroskopi, dan menjaga agar kualitas citra optimal dengan dosis radiasi minimal.</li>
+                <li><b>Radioterapi</b> – bidang yang menggunakan radiasi berenergi tinggi untuk menghancurkan sel kanker. Fisikawan medik terlibat dalam perencanaan terapi (treatment planning), kalibrasi mesin LINAC, verifikasi dosis, dan keselamatan pasien.</li>
+                <li><b>Kedokteran Nuklir</b> – bidang yang menggunakan radionuklida (radioisotop) untuk diagnosis dan terapi. Fisika Medik bertugas dalam penghitungan aktivitas radiofarmaka, dosimetri internal, prosedur PET/SPECT, serta pengendalian kontaminasi radiasi.</li>
+            </ul>
+
+            <h3>Tujuan Pendidikan</h3>
+            <p>Laboratorium Fisika Medik bertujuan menghasilkan lulusan yang mampu:</p>
+            <ul>
+                <li>Menguasai konsep fisika yang berkaitan dengan teknologi medis modern.</li>
+                <li>Menganalisis dan mengoperasikan instrumen medis berbasis fisika.</li>
+                <li>Terlibat dalam penelitian pengembangan teknologi kesehatan.</li>
+                <li>Berperan sebagai fisikawan medis profesional di rumah sakit dan pusat penelitian.</li>
+            </ul>
+
+            <h3>Kegiatan Mahasiswa di Laboratorium</h3>
+            <p>Mahasiswa yang tergabung di Laboratorium Fisika Medik akan mengikuti berbagai kegiatan seperti:</p>
+            <ul>
+                <li>Praktikum dan pengenalan alat-alat medis berbasis fisika.</li>
+                <li>Penelitian tugas akhir terkait pencitraan medis, radiasi, dan instrumentasi.</li>
+                <li>Kunjungan industri atau rumah sakit untuk melihat teknologi medis secara langsung.</li>
+                <li>Pelatihan software seperti MATLAB, Python, dan aplikasi pemodelan medis.</li>
+            </ul>
+
+            <p>Dengan semua fasilitas dan kurikulum yang tersedia, Laboratorium Fisika Medik menjadi tempat ideal bagi mahasiswa untuk memperdalam ilmu serta mempersiapkan diri berkarier di bidang kesehatan berbasis sains.</p>
+        </section>
+
+        <section id="matkul" class="section">
+            <h2>Mata Kuliah Fisika Medik – Semester 5</h2>
+            <p>Pada semester 5, Program Studi Fisika Universitas Hasanuddin mulai memperkenalkan mata kuliah khusus yang terkait langsung dengan Fisika Medik. Mata kuliah ini dirancang untuk memberikan dasar ilmiah serta kemampuan teknis yang dibutuhkan untuk memahami konsep dan teknologi medis modern.</p>
+
+            <h3>Daftar Mata Kuliah</h3>
+            <div class="grid">
+                <div class="card">
+                    <b>Fisika Radiologi dan Dosimetri</b><br>
+                    Mempelajari sifat radiasi pengion, interaksi radiasi dengan materi biologis, dan perhitungan dosis radiasi dalam prosedur medis.
+                </div>
+                <div class="card">
+                    <b>Radiobiologi</b><br>
+                    Mempelajari efek biologis radiasi pada sel, jaringan, dan organisme, termasuk mekanisme kerusakan DNA dan respons biologis.
+                </div>
+                <div class="card">
+                    <b>Fisika Radioterapi</b><br>
+                    Fokus pada prinsip fisika terapi radiasi untuk pengobatan kanker, termasuk perencanaan dosis dan teknologi radioterapi.
+                </div>
+                <div class="card">
+                    <b>Fisika Kesehatan dan proteksi Radiasi</b><br>
+                    Mempelajari keselamatan radiasi untuk pasien dan tenaga medis, termasuk prosedur proteksi radiasi dan standar keselamatan.
+                </div>
+                <div class="card">
+                    <b>Fisika Radiodiagnistik dan Intervensional</b><br>
+                    Mempelajari prinsip fisika di balik teknologi diagnostik seperti X-ray, CT, dan intervensi medis berbasis radiasi.
+                </div>
+                <div class="card">
+                    <b>Fisika Laser dan Spektroskopi</b><br>
+                    Mempelajari prinsip laser, interaksi cahaya dengan materi, dan aplikasi spektroskopi dalam bidang medis.
+                </div>
+                <div class="card">
+                    <b>Kedokteran Nuklir</b><br>
+                    Memahami prinsip penggunaan isotop radioaktif untuk diagnosis dan terapi, termasuk PET, SPECT, dan radionuklida terapi.
+                </div>
+                <div class="card">
+                    <b>Anatomi dan Fisiologi</b><br>
+                    Memahami struktur tubuh manusia dan fungsi organ, sebagai dasar klinis untuk aplikasi fisika medik.
+                </div>
+            </div>
+
+            <p>Mata kuliah ini menjadi fondasi penting bagi mahasiswa yang ingin melanjutkan karier atau penelitian dalam dunia medis, terutama pada bidang radiologi, radioterapi, dan teknologi pencitraan kesehatan.</p>
+        </section>
+
+        <section id="dosen" class="section">
+            <h2>Daftar Dosen</h2>
+            <div class="grid">
+                <div class="card"><b>Prof. Dr. Syamsir D., MS.</b><br>Kepala Laboratorium</div>
+                <div class="card"><b>Dr. Sri Dewi Astuty, S.Si., M.Si.</b></div>
+                <div class="card"><b>Arfinna, S.Si., M.Si., F.Med</b></div>
+                <div class="card"><b>Ayu Hardianti Pratiwi, S.Pd., M.Si.</b></div>
+                <div class="card"><b>Ajeng Anggreny Ibrahim, S.Pd., M.Si.</b></div>
+            </div>
+        </section>
+
+        <section id="mahasiswa" class="section">
+            <h2>Daftar Mahasiswa</h2>
+            <div class="grid">
+                <div class="card">Algiza Idam (H021231028)</div>
+                <div class="card">Andira Maharani (H021231025)</div>
+                <div class="card">Aqasa Claudia Zahnita (H021231068)</div>
+                <div class="card">Armitha Anas (H0212311060)</div>
+                <div class="card">Azzhura Fibri Ananta (H0212311015)</div>
+                <div class="card">Dea Aulia Masiku (H0212311002)</div>
+                <div class="card">Eka Adelia Putri Sariman (H0212311065)</div>
+                <div class="card">Fajriana Aris (H0212311014)</div>
+                <div class="card">Icha Nurandhini (H0212311021)</div>
+                <div class="card">Ilma Fadhilah (H0212311064)</div>
+                <div class="card">Kasyfil Aziz (H0212311058)</div>
+                <div class="card">Moh. Aryansyah Rizkullah (H0212311062)</div>
+                <div class="card">Nur Fadiyah (H0212311011)</div>
+                <div class="card">Nurfaika (H0212311048)</div>
+                <div class="card">Nurul Iftitah (H0212311056)</div>
+                <div class="card">Serli (H0212311032)</div>
+                <div class="card">ST. Rahmayanti (H0212311044)</div>
+                <div class="card">Suci Rahmayada (H0212311059)</div>
+                <div class="card">Syahrul Maulana (H0212311072)</div>
+                <div class="card">Tasyha Sri Desiana (H0212311049)</div>
+                <div class="card">Wirni Aulia Ramadhani (H0212311040)</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const pageNames = {
+            'beranda': 'Beranda',
+            'unhas': 'Universitas Hasanuddin',
+            'mipa': 'Fakultas MIPA',
+            'fisika': 'Program Studi Fisika',
+            'lab': 'Lab Fisika Medik',
+            'matkul': 'Mata Kuliah',
+            'dosen': 'Daftar Dosen',
+            'mahasiswa': 'Daftar Mahasiswa'
+        };
+
+        function showPage(pageId) {
+            const loading = document.getElementById('loading');
+            loading.classList.add('active');
+
+            setTimeout(() => {
+                const pages = document.querySelectorAll('.page');
+                pages.forEach(page => page.classList.remove('active'));
+
+                const selectedPage = document.getElementById(pageId);
+                if (selectedPage) {
+                    selectedPage.classList.add('active');
+                }
+
+                const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+                breadcrumbCurrent.textContent = pageNames[pageId] || 'Halaman';
+
+                window.scrollTo(0, 0);
+
+                loading.classList.remove('active');
+            }, 300);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        window.addEventListener('scroll', function() {
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            if (window.scrollY > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        // Toggle Menu Mobile
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('show');
+        }
+
+        // Show Modal
+        function showModal(title, content) {
+            document.getElementById('modalBody').innerHTML = '<h3>' + title + '</h3><p>' + content + '</p>';
+            document.getElementById('detailModal').classList.add('show');
+        }
+
+        // Close modal ketika klik di luar
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target == modal) {
+                modal.classList.remove('show');
+            }
+        };
+
+        // Parallax Scrolling
+        document.addEventListener('scroll', function() {
+            const parallax = document.querySelector('.parallax-bg');
+            parallax.style.transform = 'translateY(' + (window.scrollY * 0.5) + 'px)';
+        });
+
+        // Ripple Effect pada Cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                this.classList.add('ripple');
+                setTimeout(() => {
+                    this.classList.remove('ripple');
+                }, 600);
+            });
+        });
